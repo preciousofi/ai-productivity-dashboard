@@ -1,65 +1,263 @@
-import Image from "next/image";
+"use client";
+
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+import AddTask from "./components/AddTask";
+import Header from "./components/Header";
+import StatsCards from "./components/StatsCards";
+import TaskCard from "./components/TaskCard";
+
+export type Task = {
+  id: number;
+  text: string;
+  completed: boolean;
+  priority: "High" | "Medium" | "Low";
+};
 
 export default function Home() {
+  const [taskInput, setTaskInput] =
+    useState("");
+
+  const [search, setSearch] =
+    useState("");
+
+  const [filter, setFilter] =
+    useState("All");
+
+  const [tasks, setTasks] = useState<
+    Task[]
+  >([]);
+
+  // Load tasks
+  useEffect(() => {
+    const savedTasks =
+      localStorage.getItem("tasks");
+
+    if (savedTasks) {
+      setTasks(JSON.parse(savedTasks));
+    }
+  }, []);
+
+  // Save tasks
+  useEffect(() => {
+    localStorage.setItem(
+      "tasks",
+      JSON.stringify(tasks)
+    );
+  }, [tasks]);
+
+  // Add task
+  const addTask = () => {
+    if (!taskInput.trim()) return;
+
+    const priorities = [
+      "High",
+      "Medium",
+      "Low",
+    ] as const;
+
+    const randomPriority =
+      priorities[
+        Math.floor(
+          Math.random() *
+            priorities.length
+        )
+      ];
+
+    const newTask: Task = {
+      id: Date.now(),
+      text: taskInput,
+      completed: false,
+      priority: randomPriority,
+    };
+
+    setTasks([newTask, ...tasks]);
+
+    setTaskInput("");
+  };
+
+  // Enter key support
+  const handleKeyDown = (
+    e: React.KeyboardEvent
+  ) => {
+    if (e.key === "Enter") {
+      addTask();
+    }
+  };
+
+  // Toggle
+  const toggleTask = (id: number) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id
+          ? {
+              ...task,
+              completed:
+                !task.completed,
+            }
+          : task
+      )
+    );
+  };
+
+  // Delete
+  const deleteTask = (id: number) => {
+    setTasks(
+      tasks.filter(
+        (task) => task.id !== id
+      )
+    );
+  };
+
+  // Filter logic
+  const filteredTasks = useMemo(() => {
+    return tasks.filter((task) => {
+      const matchesSearch =
+        task.text
+          .toLowerCase()
+          .includes(
+            search.toLowerCase()
+          );
+
+      if (filter === "Completed") {
+        return (
+          matchesSearch &&
+          task.completed
+        );
+      }
+
+      if (filter === "Pending") {
+        return (
+          matchesSearch &&
+          !task.completed
+        );
+      }
+
+      return matchesSearch;
+    });
+  }, [tasks, search, filter]);
+
+  const completedTasks = tasks.filter(
+    (task) => task.completed
+  ).length;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main
+      style={{
+        minHeight: "100vh",
+        background: "#020617",
+        color: "white",
+        padding: "30px",
+        fontFamily: "Arial",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "1100px",
+          margin: "0 auto",
+        }}
+      >
+        <Header />
+
+        <StatsCards
+          total={tasks.length}
+          completed={completedTasks}
+          pending={
+            tasks.length -
+            completedTasks
+          }
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        {/* Search */}
+        <div
+          style={{
+            display: "flex",
+            gap: "15px",
+            marginBottom: "20px",
+            flexWrap: "wrap",
+          }}
+        >
+          <input
+            value={search}
+            onChange={(e) =>
+              setSearch(e.target.value)
+            }
+            placeholder="Search tasks..."
+            style={{
+              flex: 1,
+              minWidth: "250px",
+              padding: "14px",
+              borderRadius: "10px",
+              border: "1px solid #334155",
+              background: "#0f172a",
+              color: "white",
+            }}
+          />
+
+          <select
+            value={filter}
+            onChange={(e) =>
+              setFilter(e.target.value)
+            }
+            style={{
+              padding: "14px",
+              borderRadius: "10px",
+              background: "#0f172a",
+              color: "white",
+              border: "1px solid #334155",
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <option>All</option>
+            <option>Completed</option>
+            <option>Pending</option>
+          </select>
         </div>
-      </main>
-    </div>
+
+        <AddTask
+          taskInput={taskInput}
+          setTaskInput={setTaskInput}
+          addTask={addTask}
+          handleKeyDown={handleKeyDown}
+        />
+
+        {/* Empty state */}
+        {filteredTasks.length === 0 ? (
+          <div
+            style={{
+              textAlign: "center",
+              marginTop: "60px",
+              color: "#94a3b8",
+            }}
+          >
+            <h2>No tasks found.</h2>
+
+            <p>
+              Add a new task to get
+              started.
+            </p>
+          </div>
+        ) : (
+          <div
+            style={{
+              display: "grid",
+              gap: "15px",
+            }}
+          >
+            {filteredTasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                toggleTask={toggleTask}
+                deleteTask={deleteTask}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </main>
   );
 }
