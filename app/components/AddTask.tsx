@@ -1,61 +1,108 @@
-type AddTaskProps = {
+type Props = {
   taskInput: string;
   setTaskInput: (
     value: string
   ) => void;
-  addTask: () => void;
-  handleKeyDown: (
-    e: React.KeyboardEvent
+  priority: string;
+  setPriority: (
+    value: string
   ) => void;
+  addTask: () => void;
 };
 
 export default function AddTask({
   taskInput,
   setTaskInput,
+  priority,
+  setPriority,
   addTask,
-  handleKeyDown,
-}: AddTaskProps) {
+}: Props) {
   return (
     <div
       style={{
-        display: "flex",
+        display:
+          "flex",
         gap: "10px",
-        marginBottom: "30px",
-        flexWrap: "wrap",
+        flexWrap:
+          "wrap",
+        marginBottom:
+          "25px",
       }}
     >
       <input
-        value={taskInput}
-        onChange={(e) =>
-          setTaskInput(e.target.value)
+        value={
+          taskInput
         }
-        onKeyDown={handleKeyDown}
-        placeholder="Enter a task..."
+        onChange={(
+          e
+        ) =>
+          setTaskInput(
+            e.target
+              .value
+          )
+        }
+        placeholder="Add task..."
         style={{
           flex: 1,
-          minWidth: "250px",
-          padding: "14px",
-          borderRadius: "10px",
-          border: "1px solid #334155",
-          background: "#0f172a",
-          color: "white",
-          fontSize: "16px",
+          padding:
+            "14px",
+          borderRadius:
+            "10px",
+          border:
+            "none",
         }}
       />
 
-      <button
-        onClick={addTask}
+      <select
+        value={
+          priority
+        }
+        onChange={(
+          e
+        ) =>
+          setPriority(
+            e.target
+              .value
+          )
+        }
         style={{
-          padding: "14px 22px",
-          background: "#2563eb",
-          border: "none",
-          borderRadius: "10px",
-          color: "white",
-          cursor: "pointer",
-          fontWeight: "bold",
+          padding:
+            "14px",
+          borderRadius:
+            "10px",
         }}
       >
-        Add Task
+        <option>
+          High
+        </option>
+
+        <option>
+          Medium
+        </option>
+
+        <option>
+          Low
+        </option>
+      </select>
+
+      <button
+        onClick={
+          addTask
+        }
+        style={{
+          background:
+            "#2563eb",
+          color:
+            "white",
+          border:
+            "none",
+          padding:
+            "14px 18px",
+          borderRadius:
+            "10px",
+        }}
+      >
+        Add
       </button>
     </div>
   );

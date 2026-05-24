@@ -1,4 +1,4 @@
-type StatsProps = {
+type Props = {
   total: number;
   completed: number;
   pending: number;
@@ -8,54 +8,72 @@ export default function StatsCards({
   total,
   completed,
   pending,
-}: StatsProps) {
+}: Props) {
   const cards = [
     {
-      label: "Total Tasks",
+      label: "Total",
       value: total,
     },
     {
-      label: "Completed",
-      value: completed,
+      label:
+        "Completed",
+      value:
+        completed,
     },
     {
-      label: "Pending",
-      value: pending,
+      label:
+        "Pending",
+      value:
+        pending,
     },
   ];
 
   return (
     <div
       style={{
-        display: "grid",
+        display:
+          "grid",
         gridTemplateColumns:
-          "repeat(auto-fit, minmax(220px, 1fr))",
+          "repeat(auto-fit,minmax(180px,1fr))",
         gap: "15px",
-        marginBottom: "30px",
+        marginBottom:
+          "25px",
       }}
     >
-      {cards.map((card) => (
-        <div
-          key={card.label}
-          style={{
-            background: "#1e293b",
-            padding: "22px",
-            borderRadius: "16px",
-          }}
-        >
-          <h3>{card.label}</h3>
-
-          <p
+      {cards.map(
+        (card) => (
+          <div
+            key={
+              card.label
+            }
             style={{
-              fontSize: "34px",
-              marginTop: "10px",
-              fontWeight: "bold",
+              background:
+                "#0f172a",
+              padding:
+                "20px",
+              borderRadius:
+                "16px",
             }}
           >
-            {card.value}
-          </p>
-        </div>
-      ))}
+            <p
+              style={{
+                color:
+                  "#94a3b8",
+              }}
+            >
+              {
+                card.label
+              }
+            </p>
+
+            <h1>
+              {
+                card.value
+              }
+            </h1>
+          </div>
+        )
+      )}
     </div>
   );
 }

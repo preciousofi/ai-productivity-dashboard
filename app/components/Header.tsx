@@ -1,28 +1,68 @@
-export default function Header() {
+type Props = {
+  email: string;
+  logout: () => void;
+};
+
+export default function Header({
+  email,
+  logout,
+}: Props) {
   return (
     <div
       style={{
-        marginBottom: "30px",
+        display: "flex",
+        justifyContent:
+          "space-between",
+        alignItems:
+          "center",
+        marginBottom:
+          "30px",
+        flexWrap: "wrap",
+        gap: "15px",
       }}
     >
-      <h1
-        style={{
-          fontSize: "52px",
-          fontWeight: "bold",
-          marginBottom: "10px",
-        }}
-      >
-        AI Productivity Dashboard
-      </h1>
+      <div>
+        <h1
+          style={{
+            fontSize: "34px",
+            marginBottom:
+              "5px",
+          }}
+        >
+          AI Dashboard 🚀
+        </h1>
 
-      <p
+        <p
+          style={{
+            color:
+              "#94a3b8",
+          }}
+        >
+          {email}
+        </p>
+      </div>
+
+      <button
+        onClick={
+          logout
+        }
         style={{
-          color: "#94a3b8",
+          background:
+            "#dc2626",
+          color:
+            "white",
+          border:
+            "none",
+          padding:
+            "12px 18px",
+          borderRadius:
+            "10px",
+          cursor:
+            "pointer",
         }}
       >
-        Organize your workflow like a
-        modern SaaS platform.
-      </p>
+        Logout
+      </button>
     </div>
   );
 }

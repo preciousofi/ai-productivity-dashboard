@@ -1,100 +1,123 @@
-import { Task } from "../page";
+type Task = {
+  id: string;
+  title: string;
+  completed: boolean;
+  priority: string;
+};
 
-type TaskCardProps = {
+type Props = {
   task: Task;
-  toggleTask: (id: number) => void;
-  deleteTask: (id: number) => void;
+  toggleTask: (
+    task: Task
+  ) => void;
+  deleteTask: (
+    id: string
+  ) => void;
+  editTask: (
+    task: Task
+  ) => void;
 };
 
 export default function TaskCard({
   task,
   toggleTask,
   deleteTask,
-}: TaskCardProps) {
-  const priorityColor =
-    task.priority === "High"
+  editTask,
+}: Props) {
+  const color =
+    task.priority ===
+    "High"
       ? "#dc2626"
-      : task.priority === "Medium"
-      ? "#ca8a04"
+      : task.priority ===
+        "Medium"
+      ? "#eab308"
       : "#16a34a";
 
   return (
     <div
       style={{
-        background: "#0f172a",
-        padding: "20px",
-        borderRadius: "16px",
-        border: "1px solid #1e293b",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        flexWrap: "wrap",
+        background:
+          "#0f172a",
+        padding:
+          "20px",
+        borderRadius:
+          "16px",
+        display:
+          "flex",
+        justifyContent:
+          "space-between",
+        alignItems:
+          "center",
+        flexWrap:
+          "wrap",
         gap: "15px",
       }}
     >
       <div>
         <h3
           style={{
-            textDecoration: task.completed
-              ? "line-through"
-              : "none",
-            marginBottom: "10px",
-            fontSize: "18px",
+            textDecoration:
+              task.completed
+                ? "line-through"
+                : "none",
           }}
         >
-          {task.text}
+          {
+            task.title
+          }
         </h3>
 
         <span
           style={{
-            background: priorityColor,
-            padding: "5px 10px",
-            borderRadius: "999px",
-            fontSize: "12px",
+            background:
+              color,
+            padding:
+              "4px 10px",
+            borderRadius:
+              "999px",
+            fontSize:
+              "12px",
           }}
         >
-          {task.priority}
+          {
+            task.priority
+          }
         </span>
       </div>
 
       <div
         style={{
-          display: "flex",
+          display:
+            "flex",
           gap: "10px",
         }}
       >
         <button
           onClick={() =>
-            toggleTask(task.id)
+            editTask(
+              task
+            )
           }
-          style={{
-            background: task.completed
-              ? "#16a34a"
-              : "#334155",
-            border: "none",
-            padding: "10px 14px",
-            borderRadius: "8px",
-            color: "white",
-            cursor: "pointer",
-          }}
         >
-          {task.completed
-            ? "Completed"
-            : "Done"}
+          Edit
         </button>
 
         <button
           onClick={() =>
-            deleteTask(task.id)
+            toggleTask(
+              task
+            )
           }
-          style={{
-            background: "#dc2626",
-            border: "none",
-            padding: "10px 14px",
-            borderRadius: "8px",
-            color: "white",
-            cursor: "pointer",
-          }}
+        >
+          Done
+        </button>
+
+        <button
+          onClick={() =>
+            deleteTask(
+              task.id
+            )
+          }
         >
           Delete
         </button>
