@@ -1,11 +1,4 @@
-type Task = {
-  id: string;
-  title: string;
-  completed: boolean;
-  priority: string;
-  user_id: string;
-  created_at: string;
-};
+import { Task } from "../types/task";
 
 type Props = {
   task: Task;
@@ -27,7 +20,8 @@ export default function TaskCard({
   editTask,
 }: Props) {
   const color =
-    task.priority === "High"
+    task.priority ===
+    "High"
       ? "#dc2626"
       : task.priority ===
         "Medium"
@@ -37,20 +31,28 @@ export default function TaskCard({
   return (
     <div
       style={{
-        background: "#0f172a",
-        padding: "20px",
-        borderRadius: "16px",
-        display: "flex",
+        background:
+          "#111827",
+        padding:
+          "20px",
+        borderRadius:
+          "18px",
+        display:
+          "flex",
         justifyContent:
           "space-between",
-        alignItems: "center",
-        flexWrap: "wrap",
+        alignItems:
+          "center",
+        flexWrap:
+          "wrap",
         gap: "15px",
       }}
     >
       <div>
         <h3
           style={{
+            marginBottom:
+              "8px",
             textDecoration:
               task.completed
                 ? "line-through"
@@ -62,10 +64,14 @@ export default function TaskCard({
 
         <span
           style={{
-            background: color,
-            padding: "4px 10px",
-            borderRadius: "999px",
-            fontSize: "12px",
+            background:
+              color,
+            padding:
+              "5px 12px",
+            borderRadius:
+              "999px",
+            fontSize:
+              "12px",
           }}
         >
           {task.priority}
@@ -74,22 +80,41 @@ export default function TaskCard({
 
       <div
         style={{
-          display: "flex",
+          display:
+            "flex",
           gap: "10px",
+          flexWrap:
+            "wrap",
         }}
       >
         <button
           onClick={() =>
-            editTask(task)
+            editTask(
+              task
+            )
           }
+          style={{
+            padding:
+              "10px 14px",
+            borderRadius:
+              "10px",
+          }}
         >
           Edit
         </button>
 
         <button
           onClick={() =>
-            toggleTask(task)
+            toggleTask(
+              task
+            )
           }
+          style={{
+            padding:
+              "10px 14px",
+            borderRadius:
+              "10px",
+          }}
         >
           Done
         </button>
@@ -100,6 +125,18 @@ export default function TaskCard({
               task.id
             )
           }
+          style={{
+            background:
+              "#dc2626",
+            color:
+              "white",
+            border:
+              "none",
+            padding:
+              "10px 14px",
+            borderRadius:
+              "10px",
+          }}
         >
           Delete
         </button>

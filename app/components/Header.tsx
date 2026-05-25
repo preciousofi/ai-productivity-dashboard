@@ -1,6 +1,6 @@
 type Props = {
   email: string;
-  logout: () => void;
+  logout: () => Promise<void>;
 };
 
 export default function Header({
@@ -8,28 +8,25 @@ export default function Header({
   logout,
 }: Props) {
   return (
-    <div
+    <header
       style={{
         display: "flex",
         justifyContent:
           "space-between",
-        alignItems:
-          "center",
-        marginBottom:
-          "30px",
+        alignItems: "center",
         flexWrap: "wrap",
-        gap: "15px",
+        gap: "20px",
+        marginBottom: "30px",
       }}
     >
       <div>
         <h1
           style={{
-            fontSize: "34px",
-            marginBottom:
-              "5px",
+            fontSize: "36px",
+            margin: 0,
           }}
         >
-          AI Dashboard 🚀
+          AI Dashboard
         </h1>
 
         <p
@@ -49,20 +46,18 @@ export default function Header({
         style={{
           background:
             "#dc2626",
-          color:
-            "white",
-          border:
-            "none",
+          border: "none",
+          color: "white",
           padding:
             "12px 18px",
           borderRadius:
-            "10px",
+            "12px",
           cursor:
             "pointer",
         }}
       >
         Logout
       </button>
-    </div>
+    </header>
   );
 }

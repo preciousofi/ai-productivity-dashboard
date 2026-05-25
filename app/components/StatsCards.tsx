@@ -48,11 +48,11 @@ export default function StatsCards({
             }
             style={{
               background:
-                "#0f172a",
+                "#111827",
               padding:
-                "20px",
+                "25px",
               borderRadius:
-                "16px",
+                "18px",
             }}
           >
             <p
@@ -66,11 +66,11 @@ export default function StatsCards({
               }
             </p>
 
-            <h1>
+            <h2>
               {
                 card.value
               }
-            </h1>
+            </h2>
           </div>
         )
       )}

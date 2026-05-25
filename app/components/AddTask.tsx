@@ -7,7 +7,7 @@ type Props = {
   setPriority: (
     value: string
   ) => void;
-  addTask: () => void;
+  addTask: () => Promise<void>;
 };
 
 export default function AddTask({
@@ -22,11 +22,11 @@ export default function AddTask({
       style={{
         display:
           "flex",
-        gap: "10px",
         flexWrap:
           "wrap",
+        gap: "10px",
         marginBottom:
-          "25px",
+          "20px",
       }}
     >
       <input
@@ -41,13 +41,13 @@ export default function AddTask({
               .value
           )
         }
-        placeholder="Add task..."
+        placeholder="New task..."
         style={{
           flex: 1,
           padding:
             "14px",
           borderRadius:
-            "10px",
+            "12px",
           border:
             "none",
         }}
@@ -69,17 +69,15 @@ export default function AddTask({
           padding:
             "14px",
           borderRadius:
-            "10px",
+            "12px",
         }}
       >
         <option>
           High
         </option>
-
         <option>
           Medium
         </option>
-
         <option>
           Low
         </option>
@@ -97,12 +95,12 @@ export default function AddTask({
           border:
             "none",
           padding:
-            "14px 18px",
+            "14px 20px",
           borderRadius:
-            "10px",
+            "12px",
         }}
       >
-        Add
+        Add Task
       </button>
     </div>
   );

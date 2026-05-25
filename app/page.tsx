@@ -1,21 +1,19 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
 import { supabase } from "@/lib/supabase";
+import { fetchTasks } from "./hooks/useTasks";
+import { Task } from "./types/task";
 
 import Header from "./components/Header";
 import StatsCards from "./components/StatsCards";
 import AddTask from "./components/AddTask";
 import TaskCard from "./components/TaskCard";
-
-type Task = {
-  id: string;
-  title: string;
-  completed: boolean;
-  priority: string;
-  user_id: string;
-  created_at: string;
-};
 
 export default function Home() {
   const [email, setEmail] =
@@ -45,7 +43,6 @@ export default function Home() {
   const [filter, setFilter] =
     useState("All");
 
-  // AUTH
   useEffect(() => {
     getUser();
 
@@ -54,7 +51,7 @@ export default function Home() {
     } =
       supabase.auth.onAuthStateChange(
         (
-          _event,
+          _,
           session
         ) => {
           const currentUser =
@@ -68,7 +65,7 @@ export default function Home() {
           if (
             currentUser
           ) {
-            fetchTasks(
+            loadTasks(
               currentUser.id
             );
           } else {
@@ -90,7 +87,7 @@ export default function Home() {
     setUser(user);
 
     if (user) {
-      await fetchTasks(
+      await loadTasks(
         user.id
       );
     }
@@ -98,42 +95,18 @@ export default function Home() {
     setLoading(false);
   }
 
-  // FETCH
-  async function fetchTasks(
+  async function loadTasks(
     userId: string
-  ): Promise<void> {
-    const {
-      data,
-      error,
-    } = await supabase
-      .from("tasks")
-      .select("*")
-      .eq(
-        "user_id",
+  ) {
+    const data =
+      await fetchTasks(
         userId
-      )
-      .order(
-        "created_at",
-        {
-          ascending:
-            false,
-        }
       );
 
-    if (error) {
-      console.log(
-        error
-      );
-      return;
-    }
-
-    setTasks(
-      data || []
-    );
+    setTasks(data);
   }
 
-  // SIGNUP
-  async function signUp(): Promise<void> {
+  async function signUp() {
     const { error } =
       await supabase.auth.signUp(
         {
@@ -142,15 +115,13 @@ export default function Home() {
         }
       );
 
-    if (error) {
+    if (error)
       alert(
         error.message
       );
-    }
   }
 
-  // LOGIN
-  async function signIn(): Promise<void> {
+  async function signIn() {
     const { error } =
       await supabase.auth.signInWithPassword(
         {
@@ -159,30 +130,24 @@ export default function Home() {
         }
       );
 
-    if (error) {
+    if (error)
       alert(
         error.message
       );
-    }
   }
 
-  // LOGOUT
-  async function logout(): Promise<void> {
+  async function logout() {
     await supabase.auth.signOut();
   }
 
-  // ADD
-  async function addTask(): Promise<void> {
+  async function addTask() {
     if (
       !taskInput.trim() ||
       !user
     )
       return;
 
-    const {
-      data,
-      error,
-    } = await supabase
+    await supabase
       .from("tasks")
       .insert({
         title:
@@ -192,30 +157,18 @@ export default function Home() {
         priority,
         user_id:
           user.id,
-      })
-      .select();
-
-    if (error) {
-      alert(
-        error.message
-      );
-      return;
-    }
+      });
 
     setTaskInput("");
 
-    if (data) {
-      setTasks([
-        ...data,
-        ...tasks,
-      ]);
-    }
+    await loadTasks(
+      user.id
+    );
   }
 
-  // TOGGLE
   async function toggleTask(
     task: Task
-  ): Promise<void> {
+  ) {
     await supabase
       .from("tasks")
       .update({
@@ -227,62 +180,56 @@ export default function Home() {
         task.id
       );
 
-    await fetchTasks(
+    await loadTasks(
       user.id
     );
   }
 
-  // DELETE
   async function deleteTask(
     id: string
-  ): Promise<void> {
+  ) {
     await supabase
       .from("tasks")
       .delete()
       .eq("id", id);
 
-    await fetchTasks(
+    await loadTasks(
       user.id
     );
   }
 
-  // EDIT
   async function editTask(
     task: Task
-  ): Promise<void> {
-    const newTitle =
+  ) {
+    const title =
       prompt(
         "Edit task",
         task.title
       );
 
-    if (
-      !newTitle
-    )
+    if (!title)
       return;
 
     await supabase
       .from("tasks")
       .update({
-        title:
-          newTitle,
+        title,
       })
       .eq(
         "id",
         task.id
       );
 
-    await fetchTasks(
+    await loadTasks(
       user.id
     );
   }
 
-  // FILTERS
   const filteredTasks =
     useMemo(() => {
       return tasks.filter(
         (task) => {
-          const matchesSearch =
+          const searchMatch =
             task.title
               .toLowerCase()
               .includes(
@@ -294,7 +241,7 @@ export default function Home() {
             "Completed"
           ) {
             return (
-              matchesSearch &&
+              searchMatch &&
               task.completed
             );
           }
@@ -304,13 +251,13 @@ export default function Home() {
             "Pending"
           ) {
             return (
-              matchesSearch &&
+              searchMatch &&
               !task.completed
             );
           }
 
           return (
-            matchesSearch
+            searchMatch
           );
         }
       );
@@ -330,16 +277,13 @@ export default function Home() {
     tasks.length -
     completed;
 
-  // LOADING
-  if (loading) {
+  if (loading)
     return (
       <main>
         Loading...
       </main>
     );
-  }
 
-  // LOGIN
   if (!user) {
     return (
       <main
@@ -364,14 +308,13 @@ export default function Home() {
               "30px",
             borderRadius:
               "20px",
-            width:
-              "350px",
             display:
               "flex",
             flexDirection:
               "column",
-            gap:
-              "12px",
+            gap: "12px",
+            width:
+              "350px",
           }}
         >
           <h1
@@ -380,7 +323,7 @@ export default function Home() {
                 "black",
             }}
           >
-            AI Task Manager
+            AI Dashboard
           </h1>
 
           <input
@@ -432,7 +375,6 @@ export default function Home() {
     );
   }
 
-  // DASHBOARD
   return (
     <main
       style={{
@@ -474,8 +416,6 @@ export default function Home() {
           gap: "10px",
           marginBottom:
             "20px",
-          flexWrap:
-            "wrap",
         }}
       >
         <input
@@ -537,45 +477,25 @@ export default function Home() {
           gap: "15px",
         }}
       >
-        {filteredTasks.length ===
-        0 ? (
-          <div
-            style={{
-              background:
-                "#0f172a",
-              padding:
-                "30px",
-              borderRadius:
-                "16px",
-              textAlign:
-                "center",
-            }}
-          >
-            No tasks yet 🚀
-          </div>
-        ) : (
-          filteredTasks.map(
-            (
-              task
-            ) => (
-              <TaskCard
-                key={
-                  task.id
-                }
-                task={
-                  task
-                }
-                toggleTask={
-                  toggleTask
-                }
-                deleteTask={
-                  deleteTask
-                }
-                editTask={
-                  editTask
-                }
-              />
-            )
+        {filteredTasks.map(
+          (task) => (
+            <TaskCard
+              key={
+                task.id
+              }
+              task={
+                task
+              }
+              toggleTask={
+                toggleTask
+              }
+              deleteTask={
+                deleteTask
+              }
+              editTask={
+                editTask
+              }
+            />
           )
         )}
       </div>
