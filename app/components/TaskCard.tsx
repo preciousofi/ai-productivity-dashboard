@@ -3,19 +3,21 @@ type Task = {
   title: string;
   completed: boolean;
   priority: string;
+  user_id: string;
+  created_at: string;
 };
 
 type Props = {
   task: Task;
   toggleTask: (
     task: Task
-  ) => void;
+  ) => Promise<void>;
   deleteTask: (
     id: string
-  ) => void;
+  ) => Promise<void>;
   editTask: (
     task: Task
-  ) => void;
+  ) => Promise<void>;
 };
 
 export default function TaskCard({
@@ -25,8 +27,7 @@ export default function TaskCard({
   editTask,
 }: Props) {
   const color =
-    task.priority ===
-    "High"
+    task.priority === "High"
       ? "#dc2626"
       : task.priority ===
         "Medium"
@@ -36,20 +37,14 @@ export default function TaskCard({
   return (
     <div
       style={{
-        background:
-          "#0f172a",
-        padding:
-          "20px",
-        borderRadius:
-          "16px",
-        display:
-          "flex",
+        background: "#0f172a",
+        padding: "20px",
+        borderRadius: "16px",
+        display: "flex",
         justifyContent:
           "space-between",
-        alignItems:
-          "center",
-        flexWrap:
-          "wrap",
+        alignItems: "center",
+        flexWrap: "wrap",
         gap: "15px",
       }}
     >
@@ -62,41 +57,30 @@ export default function TaskCard({
                 : "none",
           }}
         >
-          {
-            task.title
-          }
+          {task.title}
         </h3>
 
         <span
           style={{
-            background:
-              color,
-            padding:
-              "4px 10px",
-            borderRadius:
-              "999px",
-            fontSize:
-              "12px",
+            background: color,
+            padding: "4px 10px",
+            borderRadius: "999px",
+            fontSize: "12px",
           }}
         >
-          {
-            task.priority
-          }
+          {task.priority}
         </span>
       </div>
 
       <div
         style={{
-          display:
-            "flex",
+          display: "flex",
           gap: "10px",
         }}
       >
         <button
           onClick={() =>
-            editTask(
-              task
-            )
+            editTask(task)
           }
         >
           Edit
@@ -104,9 +88,7 @@ export default function TaskCard({
 
         <button
           onClick={() =>
-            toggleTask(
-              task
-            )
+            toggleTask(task)
           }
         >
           Done
