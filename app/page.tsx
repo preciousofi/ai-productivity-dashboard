@@ -18,10 +18,17 @@ type Task = {
 };
 
 export default function Home() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [email, setEmail] =
+    useState("");
+
+  const [password, setPassword] =
+    useState("");
+
+  const [user, setUser] =
+    useState<any>(null);
+
+  const [loading, setLoading] =
+    useState(true);
 
   const [taskInput, setTaskInput] =
     useState("");
@@ -94,7 +101,7 @@ export default function Home() {
   // FETCH
   async function fetchTasks(
     userId: string
-  ) {
+  ): Promise<void> {
     const {
       data,
       error,
@@ -126,7 +133,7 @@ export default function Home() {
   }
 
   // SIGNUP
-  async function signUp() {
+  async function signUp(): Promise<void> {
     const { error } =
       await supabase.auth.signUp(
         {
@@ -143,7 +150,7 @@ export default function Home() {
   }
 
   // LOGIN
-  async function signIn() {
+  async function signIn(): Promise<void> {
     const { error } =
       await supabase.auth.signInWithPassword(
         {
@@ -160,12 +167,12 @@ export default function Home() {
   }
 
   // LOGOUT
-  async function logout() {
+  async function logout(): Promise<void> {
     await supabase.auth.signOut();
   }
 
-  // ADD TASK
-  async function addTask() {
+  // ADD
+  async function addTask(): Promise<void> {
     if (
       !taskInput.trim() ||
       !user
@@ -208,7 +215,7 @@ export default function Home() {
   // TOGGLE
   async function toggleTask(
     task: Task
-  ) {
+  ): Promise<void> {
     await supabase
       .from("tasks")
       .update({
@@ -220,7 +227,7 @@ export default function Home() {
         task.id
       );
 
-    fetchTasks(
+    await fetchTasks(
       user.id
     );
   }
@@ -228,13 +235,13 @@ export default function Home() {
   // DELETE
   async function deleteTask(
     id: string
-  ) {
+  ): Promise<void> {
     await supabase
       .from("tasks")
       .delete()
       .eq("id", id);
 
-    fetchTasks(
+    await fetchTasks(
       user.id
     );
   }
@@ -242,7 +249,7 @@ export default function Home() {
   // EDIT
   async function editTask(
     task: Task
-  ) {
+  ): Promise<void> {
     const newTitle =
       prompt(
         "Edit task",
@@ -265,12 +272,12 @@ export default function Home() {
         task.id
       );
 
-    fetchTasks(
+    await fetchTasks(
       user.id
     );
   }
 
-  // SEARCH + FILTER
+  // FILTERS
   const filteredTasks =
     useMemo(() => {
       return tasks.filter(
@@ -326,28 +333,13 @@ export default function Home() {
   // LOADING
   if (loading) {
     return (
-      <main
-        style={{
-          minHeight:
-            "100vh",
-          display:
-            "flex",
-          justifyContent:
-            "center",
-          alignItems:
-            "center",
-          background:
-            "#020617",
-          color:
-            "white",
-        }}
-      >
+      <main>
         Loading...
       </main>
     );
   }
 
-  // LOGIN SCREEN
+  // LOGIN
   if (!user) {
     return (
       <main
@@ -480,10 +472,10 @@ export default function Home() {
           display:
             "flex",
           gap: "10px",
-          flexWrap:
-            "wrap",
           marginBottom:
             "20px",
+          flexWrap:
+            "wrap",
         }}
       >
         <input
@@ -510,9 +502,7 @@ export default function Home() {
             )
           }
         >
-          <option>
-            All
-          </option>
+          <option>All</option>
           <option>
             Completed
           </option>
